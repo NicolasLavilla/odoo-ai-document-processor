@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.openrouter</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Odoo 19 settings views use the declarative app/block/setting
+                 structure instead of raw divs with hasclass('settings'). -->
+            <xpath expr="//form" position="inside">
+                <app data-string="OpenRouter" string="OpenRouter" name="openrouter_connector" groups="base.group_system">
+                    <block title="OpenRouter / LLM Connector" name="openrouter_connector">
+                        <setting string="API Key" id="openrouter_api_key_setting" help="Fallback only — prefer the OPENROUTER_API_KEY environment variable.">
+                            <field name="openrouter_api_key" password="True"/>
+                        </setting>
+                        <setting string="Model" id="openrouter_model_setting" help="e.g. openai/gpt-4o-mini. Overridden by OPENROUTER_MODEL env var.">
+                            <field name="openrouter_model"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

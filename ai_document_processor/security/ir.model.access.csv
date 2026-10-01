@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ai_document_user,ai.document.user,model_ai_document,group_ai_document_user,1,1,1,0
+access_ai_document_manager,ai.document.manager,model_ai_document,group_ai_document_manager,1,1,1,1
+access_ai_delivery_note_reference_user,ai.delivery.note.reference.user,model_ai_delivery_note_reference,group_ai_document_user,1,1,1,0
+access_ai_delivery_note_reference_manager,ai.delivery.note.reference.manager,model_ai_delivery_note_reference,group_ai_document_manager,1,1,1,1
