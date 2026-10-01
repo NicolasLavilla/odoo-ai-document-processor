@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ai_delivery_note_reference_view_list" model="ir.ui.view">
+        <field name="name">ai.delivery.note.reference.list</field>
+        <field name="model">ai.delivery.note.reference</field>
+        <field name="arch" type="xml">
+            <list string="Albaranes de proveedor">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="delivery_date"/>
+                <field name="purchase_order_ref"/>
+                <field name="state"/>
+                <field name="invoice_ids" widget="many2many_tags"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="ai_delivery_note_reference_view_form" model="ir.ui.view">
+        <field name="name">ai.delivery.note.reference.form</field>
+        <field name="model">ai.delivery.note.reference</field>
+        <field name="arch" type="xml">
+            <form string="Referencia de albarán">
+                <header>
+                    <button name="action_prepare_inventory_receipt" type="object"
+                        string="Abrir / preparar recepción" class="oe_highlight"
+                        invisible="state != 'scanned'"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="delivery_date"/>
+                        </group>
+                        <group>
+                            <field name="purchase_order_ref"/>
+                            <field name="purchase_order_id"/>
+                            <field name="state"/>
+                            <field name="source_document_id"/>
+                            <field name="stock_picking_id" readonly="1"/>
+                            <field name="picking_type_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Líneas del albarán">
+                            <field name="lines_json" widget="text"/>
+                        </page>
+                        <page string="Facturas relacionadas">
+                            <field name="invoice_ids" widget="many2many_tags"/>
+                        </page>
+                        <page string="Notas">
+                            <field name="review_note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="ai_delivery_note_reference_action" model="ir.actions.act_window">
+        <field name="name">Albaranes digitalizados</field>
+        <field name="res_model">ai.delivery.note.reference</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'scanned'), ('source_document_id', '!=', False), ('source_document_id.document_type', '=', 'delivery_note'), ('source_document_id.state', '=', 'done')]</field>
+    </record>
+
+    <menuitem id="menu_ai_delivery_note_reference"
+        name="Albaranes digitalizados"
+        parent="menu_ai_document_root"
+        action="ai_delivery_note_reference_action"
+        sequence="20"/>
+
+    <record id="stock_picking_form_ai_delivery_notes" model="ir.ui.view">
+        <field name="name">stock.picking.form.ai.delivery.notes</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Albaranes del proveedor" invisible="not ai_delivery_note_reference_ids"
+                    groups="ai_document_processor.group_ai_document_user">
+                    <field name="ai_delivery_note_reference_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="delivery_date"/>
+                            <field name="purchase_order_ref"/>
+                            <field name="source_document_id"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="account_move_form_ai_delivery_notes" model="ir.ui.view">
+        <field name="name">account.move.form.ai.delivery.notes</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Albaranes del proveedor"
+                    invisible="move_type not in ('in_invoice', 'in_refund') or not ai_delivery_note_ref_ids">
+                    <field name="ai_delivery_note_ref_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="delivery_date"/>
+                            <field name="state"/>
+                            <field name="source_document_id"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
